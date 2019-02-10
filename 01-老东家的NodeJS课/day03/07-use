@@ -1,0 +1,32 @@
+const express = require('express');
+const fs = require('fs');
+const app = express();
+
+// app.use((req, res, next) => {
+//     console.log(new Date().getTime());
+//     next();
+// });
+
+const fn = (req, res, next) => {
+    // console.log(new Date().getTime());
+    // next();
+    let filePath = req.originalUrl;
+    fs.readFile(`./public/${filePath}`, (err, data) => {
+        if (err) {
+            next();
+            return
+        }
+        res.send(data.toString())
+    })
+}
+
+app.use(fn);
+
+app.use('/admin', (req, res) => {
+    res.write(req.originalUrl + '\n');
+    res.write(req.baseUrl + '\n');
+    res.write(req.path + '\n');
+    res.end('您好,ksm');
+});
+
+app.listen(80);
